@@ -6,6 +6,7 @@ from voice_app import transcribe_audio
 from llm_app import text_prompt
 from nlp_app import llm_task_categorization
 from pymongo import MongoClient
+import datetime
 import json
 # import urllib
 # import requests
@@ -16,13 +17,13 @@ app = Flask(__name__)
 CORS(app)
 @app.route("/deleteTasks",methods=['POST'])
 def delete():
-    client = MongoClient("mongodb+srv://haseebb-sal:haskybeast123@haseebfirstcluster.1v5tosb.mongodb.net/voice-recog")
+    client = MongoClient("mongodb+srv://franco:haskybeast1234@franco-cluster.08en6ue.mongodb.net/")
     client['voice-recog'].tasks.delete_many({})
     return jsonify('done')
 
 @app.route("/tasks")
 def get_data():
-    client = MongoClient("mongodb+srv://haseebb-sal:haskybeast123@haseebfirstcluster.1v5tosb.mongodb.net/")
+    client = MongoClient("mongodb+srv://franco:haskybeast1234@franco-cluster.08en6ue.mongodb.net/")
     task_data=client["voice-recog"].tasks.find()
     data=[]
     for i in task_data:
@@ -37,10 +38,13 @@ def hello_world():
     pdf=request.files.get('pdf')
     image=request.files.get('image')
     audio=request.files.get('audio')
-    client = MongoClient("mongodb+srv://haseebb-sal:haskybeast123@haseebfirstcluster.1v5tosb.mongodb.net/voice-recog")
+    client = MongoClient("mongodb+srv://franco:haskybeast1234@franco-cluster.08en6ue.mongodb.net/voice-recog")
     if(prompt and not pdf and not image and not audio):
         llm_generate=llm_task_categorization(prompt)
         data=eval(llm_generate)
+        for i in data:
+            x = datetime.datetime.now()
+            i['timestamp']=x
         # print(data)
         client['voice-recog'].tasks.delete_many({})
         inserting_to_database=client['voice-recog'].tasks.insert_many(data)
@@ -59,8 +63,11 @@ def hello_world():
         os.remove(path)
         llm_generate=llm_task_categorization(content)
         data=eval(llm_generate)
+        for i in data:
+            x = datetime.datetime.now()
+            i['timestamp']=x
         # print(data)
-        client = MongoClient("mongodb+srv://haseebb-sal:haskybeast123@haseebfirstcluster.1v5tosb.mongodb.net/voice-recog")
+        client = MongoClient("mongodb+srv://franco:haskybeast1234@franco-cluster.08en6ue.mongodb.net/voice-recog")
         client['voice-recog'].tasks.delete_many({})
         inserting_to_database=client['voice-recog'].tasks.insert_many(data)
         return jsonify({'data':'done',"id":1})
@@ -71,8 +78,11 @@ def hello_world():
         os.remove(path)
         llm_generate=llm_task_categorization(processed[0][1])
         data=eval(llm_generate)
+        for i in data:
+            x = datetime.datetime.now()
+            i['timestamp']=x
         # print(data)
-        client = MongoClient("mongodb+srv://haseebb-sal:haskybeast123@haseebfirstcluster.1v5tosb.mongodb.net/voice-recog")
+        client = MongoClient("mongodb+srv://franco:haskybeast1234@franco-cluster.08en6ue.mongodb.net/voice-recog")
         client['voice-recog'].tasks.delete_many({})
         inserting_to_database=client['voice-recog'].tasks.insert_many(data)
         return jsonify({"data":'done',"id":1})
